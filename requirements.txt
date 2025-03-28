@@ -5,6 +5,7 @@ fake_useragent
 itemadapter
 matplotlib
 apscheduler
+gunicorn
 flask
 pandas
 numpy
