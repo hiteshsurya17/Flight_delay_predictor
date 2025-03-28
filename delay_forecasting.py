@@ -1,5 +1,4 @@
 import pandas as pd
-import xgboost as xgb
 import numpy as np
 import joblib
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
