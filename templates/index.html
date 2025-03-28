@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFW Flight Delay Predictor</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2a2a72, #009ffd);
+            color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .description {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .button-container button {
+            padding: 12px 30px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px; /* Adds gap between button and search bar */
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            width: 70%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 40px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-size: 18px;
+        }
+
+        td {
+            font-size: 16px;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .chart-container {
+            margin-top: 40px;
+        }
+
+        /* Added responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            input[type="text"] {
+                width: 60%;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        /* For the load buttons */
+        .load-buttons {
+            margin-top: 20px;
+        }
+
+        .load-buttons button {
+            background-color: #ffc107;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        .load-buttons button:hover {
+            background-color: #e0a800;
+        }
+
+        /* Move the load later button to the bottom of the table */
+        .load-buttons {
+            margin-top: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>DFW Flight Delay Predictor</h1>
+        <p class="description">This page provides AI-forecasted results for flight delays at DFW Airport. Flights that arrive at the gate within 15 minutes of the scheduled time are considered on-time, according to BTS (Bureau of Transportation Statistics).</p>
+        <p class="description">Check out the prediction statistics of yesterday's flights.</p>
+
+        <div class="button-container">
+            <button onclick="window.location.href='/flight-statistics'">View Yesterday's Flight Prediction Statistics</button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search-flight" placeholder="Enter Flight Number (e.g., AA123)">
+            <button onclick="searchFlight()">Search</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight Number</th>
+                    <th>Destination</th>
+                    <th>Actual Departure Time</th>
+                    <th>AI Delay Prediction</th>
+                </tr>
+            </thead>
+            <tbody id="flights-table">
+                <!-- Flights data will be populated here -->
+            </tbody>
+        </table>
+
+        <div class="load-buttons">
+            <button id="load-earlier">Load Earlier Flights</button>
+            <button id="load-later">Load Later Flights</button>
+        </div>
+    </div>
+
+    <script>
+        let currentFlights = [];  // Holds all the flight data
+        let currentIndex = 0;     // Tracks the index for the current batch
+        const flightsPerPage = 100;
+
+        // Get the current time in Dallas (Central Time Zone)
+        const currentDallasTime = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+
+        // Fetch flights from API
+        async function fetchFlights() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/flights'); // Flask API
+                const flights = await response.json();
+
+                // Sort flights by departure_time in ascending order
+                flights.sort((a, b) => new Date(a.departure_time) - new Date(b.departure_time));
+
+                // Store all flights
+                currentFlights = flights;
+
+                // Find the index of the first flight after the current time
+                currentIndex = currentFlights.findIndex(flight => new Date(flight.departure_time) >= new Date(currentDallasTime));
+                if (currentIndex === -1) currentIndex = 0; // If no future flights, show from start
+
+                // Display first batch of 100 flights starting from currentIndex
+                displayFlights(currentFlights.slice(currentIndex, currentIndex + flightsPerPage));
+
+            } catch (error) {
+                console.error("Error fetching flights:", error);
+            }
+        }
+
+        // Display the flights on the table
+        function displayFlights(flightsToDisplay) {
+            let tableBody = document.getElementById("flights-table");
+            tableBody.innerHTML = ""; // Clear previous data
+
+            flightsToDisplay.forEach(flight => {
+                let row = document.createElement("tr");
+
+                // Format departure time
+                let formattedDepartureTime = new Date(flight.departure_time).toLocaleString();
+
+                // Replace null AI Delay Prediction with '---'
+                let aiPrediction = flight['AI Delay Prediction'] === null ? '---' : flight['AI Delay Prediction'];
+
+                // Add row to table
+                row.innerHTML = `
+                    <td>${flight.flight_number}</td>
+                    <td>${flight.dest}</td>
+                    <td>${formattedDepartureTime}</td>
+                    <td style="color: ${aiPrediction === 'Yes' ? 'red' : aiPrediction === 'No' ? 'green' : 'black'};">
+                        ${aiPrediction}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load later flights
+        function loadLaterFlights() {
+            if (currentIndex + flightsPerPage < currentFlights.length) {
+                currentIndex += flightsPerPage;
+                displayFlights(currentFlights.slice(currentIndex, currentIndex + flightsPerPage));
+            }
+        }
+
+        // Load earlier flights
+        function loadEarlierFlights() {
+            if (currentIndex - flightsPerPage >= 0) {
+                currentIndex -= flightsPerPage;
+            } else {
+                currentIndex = 0; // Ensure we do not go out of bounds
+            }
+            displayFlights(currentFlights.slice(currentIndex, currentIndex + flightsPerPage));
+        }
+
+        // Add event listeners to the buttons
+        document.getElementById("load-later").addEventListener("click", loadLaterFlights);
+        document.getElementById("load-earlier").addEventListener("click", loadEarlierFlights);
+
+        // Fetch flights when the page loads
+        fetchFlights();
+
+        // Function to search a specific flight
+        function searchFlight() {
+            let input = document.getElementById("search-flight").value.toLowerCase();
+            let rows = document.querySelectorAll("#flights-table tr");
+
+            rows.forEach(row => {
+                let flightNumber = row.cells[0].textContent.toLowerCase();
+                row.style.display = flightNumber.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+
+</body>
+</html>

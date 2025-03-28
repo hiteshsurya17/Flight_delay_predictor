@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Prediction Statistics</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2a2a72, #009ffd);
+            color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .statistics {
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .statistics p {
+            margin: 10px 0;
+        }
+
+        .chart-container {
+            margin-top: 40px;
+        }
+
+        .pie-chart, .bar-chart {
+            margin-top: 20px;
+        }
+
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-top: 40px;
+            color: #007BFF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-size: 18px;
+        }
+
+        td {
+            font-size: 16px;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h3 {
+                font-size: 1.6em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Flight Prediction Statistics</h1>
+        <div class="statistics">
+            <p>Total Flights Scheduled on {{ yesterday_date }}: <strong>{{ statistics.total_flights_scheduled }}</strong></p>
+            <p>Total Predicted Delayed Flights: <strong>{{ statistics.total_predicted_delayed }}</strong></p>
+            <p>Actually Delayed Flights: <strong>{{ statistics.actually_delayed }}</strong></p>
+            <p>Prediction Accuracy: <strong>{{ statistics.accuracy }}%</strong></p>
+        </div>
+
+        <div class="chart-container">
+            <h3>Prediction Accuracy (Predicted Delays vs Actual Delays)</h3>
+            <div class="bar-chart">
+                <img src="data:image/png;base64,{{ bar_chart }}" alt="Prediction Accuracy Bar Chart" />
+            </div>
+        </div>
+
+        <h2>Delay Prediction Accuracy by Airline</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Airline</th>
+                    <th>Predicted Delayed Flights</th>
+                    <th>Actually Delayed Flights</th>
+                    <th>Accuracy (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in accuracy_by_carrier.iterrows() %}
+                    <tr>
+                        <td>{{ row[1]['op_unique_carrier'] }}</td>
+                        <td>{{ row[1]['predicted_delayed'] }}</td>
+                        <td>{{ row[1]['actually_delayed'] }}</td>
+                        <td>{{ row[1]['accuracy'] }}%</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        
+    </div>
+
+</body>
+</html>
