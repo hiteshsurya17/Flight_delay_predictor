@@ -204,7 +204,7 @@
         // Fetch flights from API
         async function fetchFlights() {
             try {
-                const response = await fetch('http://127.0.0.1:5000/flights'); // Flask API
+                const response = await fetch('https://flight-delay-predictor-0rkw.onrender.com/flights'); // Flask API
                 const flights = await response.json();
 
                 // Sort flights by departure_time in ascending order
