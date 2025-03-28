@@ -3,7 +3,7 @@ import csv
 from datetime import datetime, timedelta
 
 # OpenWeather API Key (Replace with your own key)
-API_KEY = "c22c55ffc74929630e37956fe7f6857e"
+API_KEY = ""
 
 # API Endpoint
 BASE_URL = "https://pro.openweathermap.org/data/2.5/forecast/hourly"
