@@ -1,4 +1,6 @@
 # Flight_delay_predictor
+![FlightDelay drawio](https://github.com/user-attachments/assets/6fd43a86-c8c4-407c-b48e-d6ee3b8c3938)
+
 ✈️ DFW Flight Delay Prediction System
 This project explores the impact of weather on flight delays using machine learning. Historical flight performance data from the U.S. Bureau of Transportation Statistics (BTS) and historical weather data from the OpenWeather API (specific to DFW Airport) were collected and hosted on AWS S3. An EMR Spark job was used to preprocess the data by filtering DFW departures, integrating weather features, and preparing the dataset for modeling.
 
