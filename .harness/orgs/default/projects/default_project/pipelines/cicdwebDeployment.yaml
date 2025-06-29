@@ -205,4 +205,4 @@ pipeline:
             deployToAll: false
         tags: {}
         delegateSelectors:
-          - kubernetes-delegate
+          - docker-delegate
