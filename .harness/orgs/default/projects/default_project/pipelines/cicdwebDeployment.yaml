@@ -162,6 +162,24 @@ pipeline:
                   timeout: 10m
               - step:
                   type: ShellScript
+                  name: terraform init
+                  identifier: terraform_init
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |-
+                          wget https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
+                          unzip terraform_1.6.6_linux_amd64.zip
+                          mv terraform /usr/local/bin/
+                          terraform version
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
+                  type: ShellScript
                   name: Terraform apply
                   identifier: Terraform_apply
                   spec:
