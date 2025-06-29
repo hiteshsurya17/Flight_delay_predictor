@@ -24,7 +24,7 @@ pipeline:
             enabled: true
             override: true
           platform:
-            os: Linux
+            os: MacOS
             arch: Arm64
           runtime:
             type: Docker
