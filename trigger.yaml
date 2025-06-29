@@ -1,0 +1,14 @@
+inputSet:
+  name: gittriggerInputset
+  identifier: gittriggerInputset
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: cicdwebDeployment
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>
