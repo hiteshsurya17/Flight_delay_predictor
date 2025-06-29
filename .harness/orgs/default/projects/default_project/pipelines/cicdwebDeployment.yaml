@@ -32,14 +32,16 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: Run
+                  type: BuildAndPushDockerRegistry
                   name: Build Docker Image
                   identifier: Build_Docker_Image
                   spec:
-                    shell: Bash
-                    command: |-
-                      # Build Docker image locally
-                      docker build -t myapp:latest .
+                    connectorRef: DockerConnector
+                    repo: hiteshsurya17/myapp
+                    tags:
+                      - latest
+                    dockerfile: Dockerfile
+                    context: .
     - stage:
         name: Terraform Provisioning
         identifier: Terraform_Provisioning
