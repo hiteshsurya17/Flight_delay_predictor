@@ -1,0 +1,62 @@
+pipeline:
+  name: cicd-webDeployment
+  identifier: cicdwebDeployment
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: hiteshsurya17flightdelay
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: GitClone
+                  name: GitClone_1
+                  identifier: GitClone_1
+                  spec:
+                    connectorRef: hiteshsurya17flightdelay
+                    build:
+                      type: branch
+                      spec:
+                        branch: main
+              - step:
+                  type: Run
+                  name: Install dependencies
+                  identifier: Install_dependencies
+                  spec:
+                    shell: Sh
+                    command: |-
+                      python3 -m venv venv
+                      source venv/bin/activate
+                      pip install -r requirements.txt
+              - step:
+                  type: Run
+                  name: Build Docker Image
+                  identifier: Build_Docker_Image
+                  spec:
+                    shell: Sh
+                    command: |-
+                      # Connect to Minikube Docker
+                      eval $(minikube docker-env)
+
+                      # Build Docker image locally
+                      docker build -t myapp:latest .
