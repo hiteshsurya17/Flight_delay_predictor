@@ -167,8 +167,7 @@ pipeline:
                       type: Inline
                       spec:
                         script: |
-                          cd terraform
-
+                          export PATH=$PATH:/opt/homebrew/bin
                           terraform init
                           terraform apply -auto-approve
                     environmentVariables: []
