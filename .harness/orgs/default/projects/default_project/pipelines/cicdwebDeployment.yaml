@@ -58,9 +58,6 @@ pipeline:
                   spec:
                     shell: Bash
                     command: |-
-                      # Connect to Minikube Docker
-                      eval $(minikube docker-env)
-
                       # Build Docker image locally
                       docker build -t myapp:latest .
     - stage:
