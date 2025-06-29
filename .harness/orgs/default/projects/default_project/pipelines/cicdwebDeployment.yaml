@@ -200,6 +200,9 @@ pipeline:
                     environmentVariables: []
                     outputVariables: []
                   timeout: 10m
+          environment:
+            environmentRef: harnessdevenv
+            deployToAll: false
         tags: {}
         delegateSelectors:
           - kubernetes-delegate
