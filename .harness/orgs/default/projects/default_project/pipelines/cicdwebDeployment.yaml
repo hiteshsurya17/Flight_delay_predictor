@@ -37,7 +37,7 @@ pipeline:
                   identifier: Build_Docker_Image
                   spec:
                     connectorRef: DockerConnector
-                    repo: hiteshsurya17/myapp
+                    repo: hiteshsuryadevara130812/myapp
                     tags:
                       - latest
                     dockerfile: Dockerfile
