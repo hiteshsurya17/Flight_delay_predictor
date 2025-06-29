@@ -201,4 +201,4 @@ pipeline:
             deployToAll: false
         tags: {}
         delegateSelectors:
-          - docker-delegate
+          - macos-arm64
