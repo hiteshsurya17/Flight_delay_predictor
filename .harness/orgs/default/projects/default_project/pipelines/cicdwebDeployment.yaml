@@ -152,7 +152,20 @@ pipeline:
                     source:
                       type: Inline
                       spec:
-                        script: terraform version
+                        script: |-
+                          echo "=== DEBUG INFO ==="
+                          echo "Hostname       : $(hostname)"
+                          echo "Current User   : $(whoami)"
+                          echo "Current Shell  : $SHELL"
+                          echo "Shell Location : $(which $SHELL)"
+                          echo "Script Path    : $0"
+                          echo "Working Dir    : $(pwd)"
+                          echo "PATH           : $PATH"
+                          echo "Terraform Path : $(which terraform || echo 'Not found')"
+                          echo "Terraform Ver  : $(terraform version || echo 'Not installed')"
+                          echo "==================="
+
+                          terraform version
                     environmentVariables: []
                     outputVariables: []
                   timeout: 10m
