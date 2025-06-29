@@ -48,10 +48,6 @@ pipeline:
         description: ""
         type: Custom
         spec:
-          runtime:
-            type: Cloud
-            spec:
-              image: hashicorp/terraform:light
           execution:
             steps:
               - step:
