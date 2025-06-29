@@ -8,7 +8,10 @@ pipeline:
     ci:
       codebase:
         connectorRef: hiteshsurya17flightdelay
-        build: <+input>
+        build:
+          type: branch
+          spec:
+            branch: main
   stages:
     - stage:
         name: Build
