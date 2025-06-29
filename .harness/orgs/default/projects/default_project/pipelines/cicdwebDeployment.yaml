@@ -43,7 +43,7 @@ pipeline:
                   name: Install dependencies
                   identifier: Install_dependencies
                   spec:
-                    shell: Sh
+                    shell: Bash
                     command: |-
                       python3 -m venv venv
                       source venv/bin/activate
@@ -53,10 +53,129 @@ pipeline:
                   name: Build Docker Image
                   identifier: Build_Docker_Image
                   spec:
-                    shell: Sh
+                    shell: Bash
                     command: |-
                       # Connect to Minikube Docker
                       eval $(minikube docker-env)
 
                       # Build Docker image locally
                       docker build -t myapp:latest .
+    - stage:
+        name: Terraform Provisioning
+        identifier: Terraform_Provisioning
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Write Terraform Files
+                  identifier: Write_Terraform_Files
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          mkdir -p terraform
+                          cd terraform
+
+                          # Write main.tf
+                          cat <<EOF > main.tf
+                          provider "kubernetes" {
+                            config_path = "~/.kube/config"
+                          }
+
+                          resource "kubernetes_deployment" "app" {
+                            metadata {
+                              name = "myapp"
+                              labels = {
+                                app = "myapp"
+                              }
+                            }
+
+                            spec {
+                              replicas = 1
+
+                              selector {
+                                match_labels = {
+                                  app = "myapp"
+                                }
+                              }
+
+                              template {
+                                metadata {
+                                  labels = {
+                                    app = "myapp"
+                                  }
+                                }
+
+                                spec {
+                                  container {
+                                    image = "myapp:latest"
+                                    name  = "myapp"
+                                    port {
+                                      container_port = 5000
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+
+                          resource "kubernetes_service" "app_service" {
+                            metadata {
+                              name = "myapp-service"
+                            }
+
+                            spec {
+                              selector = {
+                                app = "myapp"
+                              }
+
+                              port {
+                                protocol    = "TCP"
+                                port        = 80
+                                target_port = 5000
+                              }
+
+                              type = "NodePort"
+                            }
+                          }
+                          EOF
+
+                          # Write versions.tf
+                          cat <<EOF > versions.tf
+                          terraform {
+                            required_providers {
+                              kubernetes = {
+                                source  = "hashicorp/kubernetes"
+                                version = "~> 2.0"
+                              }
+                            }
+                          }
+                          EOF
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
+                  type: ShellScript
+                  name: Terraform apply
+                  identifier: Terraform_apply
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          cd terraform
+
+                          terraform init
+                          terraform apply -auto-approve
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+        tags: {}
