@@ -32,26 +32,6 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: GitClone
-                  name: GitClone_1
-                  identifier: GitClone_1
-                  spec:
-                    connectorRef: hiteshsurya17flightdelay
-                    build:
-                      type: branch
-                      spec:
-                        branch: main
-              - step:
-                  type: Run
-                  name: Install dependencies
-                  identifier: Install_dependencies
-                  spec:
-                    shell: Bash
-                    command: |-
-                      python3 -m venv venv
-                      source venv/bin/activate
-                      pip install -r requirements.txt
-              - step:
                   type: Run
                   name: Build Docker Image
                   identifier: Build_Docker_Image
