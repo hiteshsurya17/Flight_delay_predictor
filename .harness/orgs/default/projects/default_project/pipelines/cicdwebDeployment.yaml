@@ -56,7 +56,8 @@ pipeline:
                   identifier: TerraformApply_1
                   spec:
                     provisionerIdentifier: my_k8s_namespace
-                    cloudCliConfiguration:
+                    configuration:
+                      type: Inline
                       spec:
                         configFiles:
                           store:
@@ -68,3 +69,5 @@ pipeline:
                             type: Github
                   timeout: 10m
         tags: {}
+        delegateSelectors:
+          - macos-arm64
