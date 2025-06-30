@@ -38,15 +38,11 @@ pipeline:
                   spec:
                     shell: Bash
                     command: |-
-                      #!/bin/bash
-
-
-                      # Install Terraform
                       echo "Installing Terraform..."
                       TERRAFORM_VERSION="1.5.7"
-                      wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                      curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                       unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-                      sudo mv terraform /usr/local/bin/
+                      mv terraform /usr/local/bin/
                       terraform --version
               - step:
                   type: BuildAndPushDockerRegistry
