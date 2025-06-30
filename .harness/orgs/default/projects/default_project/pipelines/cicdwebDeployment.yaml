@@ -141,6 +141,8 @@ pipeline:
                           EOF
                     environmentVariables: []
                     outputVariables: []
+                    delegateSelectors:
+                      - macos-arm64
                   timeout: 10m
               - step:
                   type: ShellScript
@@ -148,8 +150,7 @@ pipeline:
                   identifier: terraform_init
                   spec:
                     shell: Bash
-                    executionTarget:
-                      host: "true"
+                    executionTarget: {}
                     source:
                       type: Inline
                       spec:
@@ -169,6 +170,8 @@ pipeline:
                           terraform version
                     environmentVariables: []
                     outputVariables: []
+                    delegateSelectors:
+                      - macos-arm64
                   timeout: 10m
               - step:
                   type: ShellScript
@@ -176,8 +179,7 @@ pipeline:
                   identifier: Terraform_apply
                   spec:
                     shell: Bash
-                    executionTarget:
-                      host: "true"
+                    executionTarget: {}
                     source:
                       type: Inline
                       spec:
@@ -187,6 +189,8 @@ pipeline:
                           terraform apply -auto-approve
                     environmentVariables: []
                     outputVariables: []
+                    delegateSelectors:
+                      - macos-arm64
                   timeout: 10m
         tags: {}
         delegateSelectors:
