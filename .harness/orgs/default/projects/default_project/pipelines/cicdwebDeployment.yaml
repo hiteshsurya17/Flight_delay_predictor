@@ -43,164 +43,28 @@ pipeline:
                     dockerfile: Dockerfile
                     context: .
     - stage:
-        name: Terraform Provisioning
-        identifier: Terraform_Provisioning
+        name: terraform provisioning
+        identifier: terraform_provisioning
         description: ""
         type: Custom
         spec:
           execution:
             steps:
               - step:
-                  type: ShellScript
-                  name: Write Terraform Files
-                  identifier: Write_Terraform_Files
+                  type: TerraformApply
+                  name: TerraformApply_1
+                  identifier: TerraformApply_1
                   spec:
-                    shell: Bash
-                    executionTarget:
-                      host: 192.168.4.40
-                      connectorRef: local_ssh_key
-                      workingDirectory: /Users/hiteshchowdarysuryadevara
-                    source:
-                      type: Inline
+                    provisionerIdentifier: my_k8s_namespace
+                    cloudCliConfiguration:
                       spec:
-                        script: |
-                          mkdir -p terraform
-                          cd terraform
-
-                          # Write main.tf
-                          cat <<EOF > main.tf
-                          provider "kubernetes" {
-                            config_path = "~/.kube/config"
-                          }
-
-                          resource "kubernetes_deployment" "app" {
-                            metadata {
-                              name = "myapp"
-                              labels = {
-                                app = "myapp"
-                              }
-                            }
-
-                            spec {
-                              replicas = 1
-
-                              selector {
-                                match_labels = {
-                                  app = "myapp"
-                                }
-                              }
-
-                              template {
-                                metadata {
-                                  labels = {
-                                    app = "myapp"
-                                  }
-                                }
-
-                                spec {
-                                  container {
-                                    image = "myapp:latest"
-                                    name  = "myapp"
-                                    port {
-                                      container_port = 5000
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-
-                          resource "kubernetes_service" "app_service" {
-                            metadata {
-                              name = "myapp-service"
-                            }
-
-                            spec {
-                              selector = {
-                                app = "myapp"
-                              }
-
-                              port {
-                                protocol    = "TCP"
-                                port        = 80
-                                target_port = 5000
-                              }
-
-                              type = "NodePort"
-                            }
-                          }
-                          EOF
-
-                          # Write versions.tf
-                          cat <<EOF > versions.tf
-                          terraform {
-                            required_providers {
-                              kubernetes = {
-                                source  = "hashicorp/kubernetes"
-                                version = "~> 2.0"
-                              }
-                            }
-                          }
-                          EOF
-                    environmentVariables: []
-                    outputVariables: []
-                    delegateSelectors:
-                      - macos-arm64
-                  timeout: 10m
-              - step:
-                  type: ShellScript
-                  name: terraform init
-                  identifier: terraform_init
-                  spec:
-                    shell: Bash
-                    executionTarget:
-                      host: 192.168.4.40
-                      connectorRef: local_ssh_key
-                      workingDirectory: /Users/hiteshchowdarysuryadevara
-                    source:
-                      type: Inline
-                      spec:
-                        script: |-
-                          echo "=== DEBUG INFO ==="
-                          echo "Hostname       : $(hostname)"
-                          echo "Current User   : $(whoami)"
-                          echo "Current Shell  : $SHELL"
-                          echo "Shell Location : $(which $SHELL)"
-                          echo "Script Path    : $0"
-                          echo "Working Dir    : $(pwd)"
-                          echo "PATH           : $PATH"
-                          echo "Terraform Path : $(which terraform || echo 'Not found')"
-                          echo "Terraform Ver  : $(terraform version || echo 'Not installed')"
-                          echo "==================="
-
-                          terraform version
-                    environmentVariables: []
-                    outputVariables: []
-                    delegateSelectors:
-                      - macos-arm64
-                  timeout: 10m
-              - step:
-                  type: ShellScript
-                  name: Terraform apply
-                  identifier: Terraform_apply
-                  spec:
-                    shell: Bash
-                    executionTarget:
-                      host: 192.168.4.40
-                      connectorRef: local_ssh_key
-                      workingDirectory: /Users/hiteshchowdarysuryadevara
-                    source:
-                      type: Inline
-                      spec:
-                        script: |
-                          export PATH=$PATH:/opt/homebrew/bin
-                          terraform init
-                          terraform apply -auto-approve
-                    environmentVariables: []
-                    outputVariables: []
-                    delegateSelectors:
-                      - macos-arm64
+                        configFiles:
+                          store:
+                            spec:
+                              connectorRef: hiteshsurya17flightdelay
+                              gitFetchType: Branch
+                              branch: main
+                              folderPath: .
+                            type: Github
                   timeout: 10m
         tags: {}
-        delegateSelectors:
-          - macos-arm64
