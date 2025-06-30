@@ -148,7 +148,8 @@ pipeline:
                   identifier: terraform_init
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    executionTarget:
+                      host: "true"
                     source:
                       type: Inline
                       spec:
@@ -175,7 +176,8 @@ pipeline:
                   identifier: Terraform_apply
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    executionTarget:
+                      host: "true"
                     source:
                       type: Inline
                       spec:
