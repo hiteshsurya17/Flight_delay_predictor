@@ -32,16 +32,6 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: Run
-                  name: Terraform Version Check
-                  identifier: terraform_version_check
-                  spec:
-                    shell: Sh
-                    image: hashicorp/terraform:1.5.7
-                    command: |-
-                      terraform --version
-                      echo "Terraform is available"
-              - step:
                   type: BuildAndPushDockerRegistry
                   name: Build Docker Image
                   identifier: Build_Docker_Image
@@ -52,6 +42,16 @@ pipeline:
                       - latest
                     dockerfile: Dockerfile
                     context: .
+              - step:
+                  type: Run
+                  name: Terraform Version Check
+                  identifier: terraform_version_check
+                  spec:
+                    shell: Sh
+                    image: hashicorp/terraform:1.5.7
+                    command: |-
+                      terraform --version
+                      echo "Terraform is available"
         delegateSelectors:
           - macos-arm64
     - stage:
@@ -79,6 +79,34 @@ pipeline:
                               gitFetchType: Branch
                               branch: main
                               folderPath: .
+                  timeout: 10m
+              - step:
+                  type: ShellScript
+                  name: terraform init
+                  identifier: terraform_init
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: terraform init
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
+                  type: ShellScript
+                  name: terraform apply
+                  identifier: terraform_apply
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: terraform apply
+                    environmentVariables: []
+                    outputVariables: []
                   timeout: 10m
         tags: {}
         delegateSelectors:
