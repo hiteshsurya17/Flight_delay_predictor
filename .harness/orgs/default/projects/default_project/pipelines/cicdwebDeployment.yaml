@@ -52,19 +52,10 @@ pipeline:
                     command: |-
                       terraform --version
                       echo "Terraform is available"
-        delegateSelectors:
-          - macos-arm64
-    - stage:
-        name: terraform provisioning
-        identifier: terraform_provisioning
-        type: Custom
-        spec:
-          execution:
-            steps:
               - step:
                   type: Run
-                  name: Terraform Provisioning
-                  identifier: terraform_provisioning_run
+                  name: Terraform apply
+                  identifier: terraform_appyly
                   spec:
                     shell: Sh
                     image: hashicorp/terraform:1.5.7
@@ -109,5 +100,5 @@ pipeline:
                       terraform init
                       terraform plan
                       terraform apply -auto-approve
-          delegateSelectors:
-            - macos-arm64
+        delegateSelectors:
+          - macos-arm64
