@@ -56,7 +56,10 @@ pipeline:
                   identifier: Write_Terraform_Files
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    executionTarget:
+                      host: 192.168.4.40
+                      connectorRef: local_ssh_key
+                      workingDirectory: /Users/hiteshchowdarysuryadevara
                     source:
                       type: Inline
                       spec:
@@ -150,7 +153,10 @@ pipeline:
                   identifier: terraform_init
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    executionTarget:
+                      host: 192.168.4.40
+                      connectorRef: local_ssh_key
+                      workingDirectory: /Users/hiteshchowdarysuryadevara
                     source:
                       type: Inline
                       spec:
@@ -179,7 +185,10 @@ pipeline:
                   identifier: Terraform_apply
                   spec:
                     shell: Bash
-                    executionTarget: {}
+                    executionTarget:
+                      host: 192.168.4.40
+                      connectorRef: local_ssh_key
+                      workingDirectory: /Users/hiteshchowdarysuryadevara
                     source:
                       type: Inline
                       spec:
