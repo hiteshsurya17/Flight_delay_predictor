@@ -63,23 +63,20 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: TerraformApply
-                  name: TerraformApply_1
-                  identifier: TerraformApply_1
+                  type: Run
+                  name: Terraform Provisioning
+                  identifier: terraform_provisioning_run
                   spec:
-                    provisionerIdentifier: my_k8s_namespace
-                    configuration:
-                      type: Inline
-                      spec:
-                        configFiles:
-                          store:
-                            type: Github
-                            spec:
-                              connectorRef: hiteshsurya17flightdelay
-                              gitFetchType: Branch
-                              branch: main
-                              folderPath: .
-                  timeout: 10m
+                    shell: Sh
+                    image: hashicorp/terraform:1.5.7
+                    command: |-
+                      terraform --version
+                      terraform init
+                      terraform plan
+                      terraform apply -auto-approve
+                    workingDir: ./
+                    envVariables:
+                      TF_LOG: INFO
               - step:
                   type: ShellScript
                   name: terraform init
@@ -108,6 +105,5 @@ pipeline:
                     environmentVariables: []
                     outputVariables: []
                   timeout: 10m
-        tags: {}
-        delegateSelectors:
-          - macos-arm64
+          delegateSelectors:
+            - macos-arm64
