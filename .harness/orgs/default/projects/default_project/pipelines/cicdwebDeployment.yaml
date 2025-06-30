@@ -14,7 +14,7 @@ pipeline:
             branch: main
   stages:
     - stage:
-        name: Build
+        name: CICD
         identifier: Build
         description: ""
         type: CI
@@ -23,6 +23,7 @@ pipeline:
           caching:
             enabled: true
             override: true
+            paths: []
           platform:
             os: MacOS
             arch: Arm64
@@ -80,5 +81,7 @@ pipeline:
                       terraform init
                       terraform plan
                       terraform apply -auto-approve
+          buildIntelligence:
+            enabled: false
         delegateSelectors:
           - macos-arm64
