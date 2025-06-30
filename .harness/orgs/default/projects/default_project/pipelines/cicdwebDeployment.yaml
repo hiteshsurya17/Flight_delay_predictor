@@ -32,6 +32,32 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: install dependencies and terraform
+                  identifier: install_dependencies_and_terraform
+                  spec:
+                    shell: Bash
+                    command: |-
+                      #!/bin/bash
+
+                      # Install Python dependencies
+                      if [ -f requirements.txt ]; then
+                        echo "Installing Python dependencies from requirements.txt..."
+                        python3 -m pip install --upgrade pip
+                        pip3 install -r requirements.txt
+                      else
+                        echo "requirements.txt not found!"
+                        exit 1
+                      fi
+
+                      # Install Terraform
+                      echo "Installing Terraform..."
+                      TERRAFORM_VERSION="1.5.7"
+                      wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                      unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                      sudo mv terraform /usr/local/bin/
+                      terraform --version
+              - step:
                   type: BuildAndPushDockerRegistry
                   name: Build Docker Image
                   identifier: Build_Docker_Image
@@ -42,6 +68,8 @@ pipeline:
                       - latest
                     dockerfile: Dockerfile
                     context: .
+        delegateSelectors:
+          - macos-arm64
     - stage:
         name: terraform provisioning
         identifier: terraform_provisioning
