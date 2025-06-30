@@ -33,17 +33,14 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: install dependencies and terraform
-                  identifier: install_dependencies_and_terraform
+                  name: Terraform Version Check
+                  identifier: terraform_version_check
                   spec:
-                    shell: Bash
+                    shell: Sh
+                    image: hashicorp/terraform:1.5.7
                     command: |-
-                      echo "Installing Terraform..."
-                      TERRAFORM_VERSION="1.5.7"
-                      curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip
-                      unzip terraform_${TERRAFORM_VERSION}_linux_arm64.zip
-                      mv terraform /usr/local/bin/
                       terraform --version
+                      echo "Terraform is available"
               - step:
                   type: BuildAndPushDockerRegistry
                   name: Build Docker Image
@@ -76,12 +73,12 @@ pipeline:
                       spec:
                         configFiles:
                           store:
+                            type: Github
                             spec:
                               connectorRef: hiteshsurya17flightdelay
                               gitFetchType: Branch
                               branch: main
                               folderPath: .
-                            type: Github
                   timeout: 10m
         tags: {}
         delegateSelectors:
