@@ -40,8 +40,8 @@ pipeline:
                     command: |-
                       echo "Installing Terraform..."
                       TERRAFORM_VERSION="1.5.7"
-                      curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-                      unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                      curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip
+                      unzip terraform_${TERRAFORM_VERSION}_linux_arm64.zip
                       mv terraform /usr/local/bin/
                       terraform --version
               - step:
