@@ -77,33 +77,5 @@ pipeline:
                     workingDir: ./
                     envVariables:
                       TF_LOG: INFO
-              - step:
-                  type: ShellScript
-                  name: terraform init
-                  identifier: terraform_init
-                  spec:
-                    shell: Bash
-                    executionTarget: {}
-                    source:
-                      type: Inline
-                      spec:
-                        script: terraform init
-                    environmentVariables: []
-                    outputVariables: []
-                  timeout: 10m
-              - step:
-                  type: ShellScript
-                  name: terraform apply
-                  identifier: terraform_apply
-                  spec:
-                    shell: Bash
-                    executionTarget: {}
-                    source:
-                      type: Inline
-                      spec:
-                        script: terraform apply
-                    environmentVariables: []
-                    outputVariables: []
-                  timeout: 10m
           delegateSelectors:
             - macos-arm64
